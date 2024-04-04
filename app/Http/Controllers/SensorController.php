@@ -10,72 +10,108 @@ class SensorController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): \Illuminate\Http\JsonResponse
     {
-        $data = Sensor::all();
-
-        return response()->json([
-            'message' => 'List of sensors',
-            'data' => $data
-        ]);
+        $data = new Sensor();
+        try{
+            $sensor = $data->getAll();
+            $data = $sensor['data'];
+            $message = $sensor['message'];
+            return response()->json([
+                'message' => $message,
+                'data' => $data
+            ],200);
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
         $request = $request->all();
-        $id_user = auth()->user()->id;
-        $request['id_user_created'] = $id_user;
-        $sensor = Sensor::create($request);
-        return response()->json([
-            'message' => 'Sensor created',
-            'data' => $sensor
-        ]);
+        $data = new Sensor();
+        try{
+            $sensor = $data->saveSensor($request);
+            $data = $sensor['data'];
+            $message = $sensor['message'];
+            return response()->json([
+                'message' => $message,
+                'data' => $data
+            ], 201);
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id): \Illuminate\Http\JsonResponse
     {
-        $sensor = Sensor::find($id);
-        return response()->json([
-            'message' => 'Sensor found',
-            'data' => $sensor
-        ]);
+        $data = new Sensor();
+        try{
+            $sensor = $data->getSensorById($id);
+            $data = $sensor['data'];
+            $message = $sensor['message'];
+            return response()->json([
+                'message' => $message,
+                'data' => $data
+            ],200);
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, string $id): \Illuminate\Http\JsonResponse
     {
         $request = $request->all();
-        $id_user = auth()->user()->id;
-        $request['id_user_updated'] = $id_user;
-        $sensor = Sensor::find($id);
-        $sensor->update($request);
-        return response()->json([
-            'message' => 'Sensor updated',
-            'data' => $sensor
-        ]);
+        $data = new Sensor();
+        try{
+            $sensor = $data->updateSensor($request, $id);
+            $data = $sensor['data'];
+            $message = $sensor['message'];
+            return response()->json([
+                'message' => $message,
+                'data' => $data
+            ]);
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(string $id): \Illuminate\Http\JsonResponse
     {
-        $id_user = auth()->user()->id;
-        $sensor = Sensor::find($id);
-        $sensor->id_user_deleted = $id_user;
-        $sensor->save();
-        $sensor->delete();
-        return response()->json([
-            'message' => 'Sensor deleted',
-            'data' => $sensor
-        ]);
+        $data = new Sensor();
+        try{
+            $sensor = $data->deleteSensor($id);
+            $data = $sensor['data'];
+            $message = $sensor['message'];
+            return response()->json([
+                'message' => $message,
+                'data' => $data
+            ]);
+        }catch (\Exception $e){
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
     }
 }
