@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\SensorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware;
 
@@ -21,4 +22,8 @@ Route::post('register', [AuthController::class, 'register']);
 Route::middleware('jwt')->group(function () {
     Route::get('user', [AuthController::class, 'user'])->name('user');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::middleware('jwt')->group(function () {
+    Route::resource('sensors', SensorController::class)->except(['create', 'edit']);
 });
